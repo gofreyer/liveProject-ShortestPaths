@@ -73,7 +73,7 @@ namespace shortest_paths
                 if (result == true)
                 {
                     // Generate the network.
-                    MyNetwork = BuildGridNetwork(dialog.FileName, 600, 400, 3, 5);
+                    MyNetwork = BuildGridNetwork(dialog.FileName, 600, 400, 6, 8);
                     MyNetwork.MyWin = this;
                 }
             }
@@ -101,7 +101,7 @@ namespace shortest_paths
                 if (result == true)
                 {
                     // Generate the network.
-                    MyNetwork = BuildGridNetwork(dialog.FileName, 600, 400, 10, 15);
+                    MyNetwork = BuildGridNetwork(dialog.FileName, 800, 600, 10, 15);
                     MyNetwork.MyWin = this;
                 }
             }
@@ -132,14 +132,16 @@ namespace shortest_paths
         private void algorithmComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
             //MessageBox.Show("Combobox_SelectionChanged");
-            MyNetwork.AlgorithmType = Network.AlgorithmTypes.LabelSetting;
-            if (algorithmComboBox.Text == "Label Setting")
+            string text = ((sender as ComboBox).SelectedItem as ComboBoxItem).Content.ToString();
+            if (text == "Label Setting")
             {
                 MyNetwork.AlgorithmType = Network.AlgorithmTypes.LabelSetting;
+                MyNetwork.InitDijkstra();
             }
-            else if (algorithmComboBox.Text == "Label Correcting")
+            else if (text == "Label Correcting")
             {
                 MyNetwork.AlgorithmType = Network.AlgorithmTypes.LabelCorrecting;
+                MyNetwork.InitDijkstra();
             }
         }
         private Network BuildGridNetwork(string _filename, double _width, double _height, int _numRows, int _numCols)
@@ -210,6 +212,14 @@ namespace shortest_paths
         public void SetTotalCostBox(string _text)
         {
             totalCostBox.Text = _text; 
+        }
+        public void SetText(string _name, string _text)
+        {
+            object wantedBox = FindName(_name);
+            if (wantedBox is TextBox)
+            {
+                ((TextBox)wantedBox).Text = _text;
+            }
         }
     }
 }

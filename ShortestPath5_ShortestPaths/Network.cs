@@ -359,8 +359,8 @@ namespace shortest_paths
         public void MakeRandomizedLink(Node _node1, Node _node2)
         {
             const double dMin = 1.0;
-            const double dMax = 9.5;
-            double cost = (_node1.Distance(_node2) * (Rand.NextDouble() * (dMax - dMin) + dMin))/10.0;
+            const double dMax = 1.2;
+            double cost = (_node1.Distance(_node2) * (Rand.NextDouble() * (dMax - dMin) + dMin))/1.0;
             //double cost = _node1.Distance(_node2);
 
             Link link = new Link(this, _node1, _node2, (int)cost);
@@ -374,7 +374,7 @@ namespace shortest_paths
             result += "# Nodes.\n";
             foreach (Node node in Nodes)
             {
-                result += $"{node.Center.X},{node.Center.Y},{node.Text}\n";
+                result += $"{(int)node.Center.X},{(int)node.Center.Y},{node.Text}\n";
             }
 
             result += "# Links.\n";
@@ -601,7 +601,10 @@ namespace shortest_paths
         {
             if (MyWin != null)
             {
-                MyWin.SetTotalCostBox("");
+                //MyWin.SetTotalCostBox("");
+                MyWin.SetText("totalCostBox","");
+                MyWin.SetText("checksBox", "");
+                MyWin.SetText("popsBox", "");
             }
             if (StartNode != null)
             {
@@ -636,6 +639,13 @@ namespace shortest_paths
                 link.IsInPath = false;
                 link.IsInTree = false;
             }
+            if (MyWin != null)
+            {
+                //MyWin.SetTotalCostBox("");
+                MyWin.SetText("totalCostBox", "");
+                MyWin.SetText("checksBox", "");
+                MyWin.SetText("popsBox", "");
+            }
         }
         
         public void FindPathTreeLabelSetting()
@@ -666,6 +676,7 @@ namespace shortest_paths
                 int minIndex = -1;
                 for(int index = 0; index < kandidaten.Count; index++ )
                 {
+                    checks++;
                     if (kandidaten[index].TotalCost < minTotalCost)
                     {
                         currentNode = kandidaten[index];
@@ -681,7 +692,6 @@ namespace shortest_paths
                 pops++;
                 foreach (Link l in currentNode.MyLinks)
                 {
-                    checks++;
                     if (currentNode.TotalCost + l.Cost < l.ToNode.TotalCost)
                     {
                         l.ToNode.TotalCost = currentNode.TotalCost + l.Cost;
@@ -701,9 +711,65 @@ namespace shortest_paths
                     }
                 }
             }
+            if (MyWin != null)
+            {
+                MyWin.SetText("checksBox", checks.ToString());
+                MyWin.SetText("popsBox", pops.ToString());
+            }
         }
         public void FindPathTreeLabelCorrecting()
         {
+            // Dijkstra
+            InitDijkstra();
+
+            if (StartNode == null)
+            {
+                return;
+            }
+
+            int checks = 0;
+            int pops = 0;
+
+            List<Node> kandidaten = new List<Node>();
+
+            StartNode.TotalCost = 0;
+            StartNode.ShortestPathLink = null;
+            kandidaten.Add(StartNode);
+            StartNode.VisitsCount++;
+
+            Node currentNode = null;
+            while (kandidaten.Count > 0)
+            {
+                currentNode = kandidaten[0];
+                currentNode.VisitsCount = 0;
+                kandidaten.RemoveAt(0);
+                pops++;
+                foreach (Link l in currentNode.MyLinks)
+                {
+                    if (currentNode.TotalCost + l.Cost < l.ToNode.TotalCost)
+                    {
+                        l.ToNode.TotalCost = currentNode.TotalCost + l.Cost;
+                        if (l.ToNode.ShortestPathLink != null)
+                        {
+                            l.ToNode.ShortestPathLink.IsInPath = false;
+                            l.ToNode.ShortestPathLink.IsInTree = false;
+                        }
+                        l.ToNode.ShortestPathLink = l;
+                        l.ToNode.ShortestPathLink.IsInTree = true;
+
+                        if (l.ToNode.VisitsCount <= 0)
+                        {
+                            kandidaten.Add(l.ToNode);
+                        }
+                        l.ToNode.VisitsCount++;
+                    }
+                }
+            }
+            if (MyWin != null)
+            {
+                MyWin.SetText("checksBox", checks.ToString());
+                MyWin.SetText("popsBox", pops.ToString());
+            }
 
         }
         public void FindPath()
@@ -716,7 +782,11 @@ namespace shortest_paths
                 currentNode.ShortestPathLink.IsInPath = true;
                 currentNode = currentNode.ShortestPathLink.FromNode;
             }
-            if (MyWin != null) MyWin.SetTotalCostBox(pathTotalCost.ToString());
+            if (MyWin != null)
+            {
+                //MyWin.SetTotalCostBox(pathTotalCost.ToString());
+                MyWin.SetText("totalCostBox", pathTotalCost.ToString());
+            }
         }
         /*
          function Dijkstra(Graph, source):

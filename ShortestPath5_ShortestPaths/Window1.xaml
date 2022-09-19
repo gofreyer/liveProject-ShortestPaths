@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Selecting Nodes"
-    Height="300" Width="401.342">
+    Height="300" Width="557">
     <Window.CommandBindings>
         <CommandBinding Command="Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed" />
     </Window.CommandBindings>
@@ -25,9 +25,12 @@
                 <ComboBoxItem Content="Label Setting" />
                 <ComboBoxItem Content="Label Correcting" />
             </ComboBox>
+            <Label Content="Checks:"/>
+            <TextBox Name="checksBox" Height="23" Margin="0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="40"/>
+            <Label Content="Pops:"/>
+            <TextBox Name="popsBox" Height="23" Margin="0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="40"/>
             <Label Content="TotalCost:"/>
-            <TextBox Name="totalCostBox" Height="23" Margin="0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="50
-                     "/>
+            <TextBox Name="totalCostBox" Height="23" Margin="0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="50"/>
         </ToolBar>
         <Border BorderBrush="Black" BorderThickness="1" Margin="3">
             <ScrollViewer
